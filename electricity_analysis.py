@@ -4,10 +4,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 
-# Load the dataset
-data = pd.read_csv('C:\\Users\\GIFT\\Desktop\\pyth\\Go - Sheet1.csv')
-
-# Initialize the Dash app with Bootstrap theme
+# Initialize the Dash app
 app = dash.Dash(
     __name__,
     external_stylesheets=[
@@ -16,6 +13,14 @@ app = dash.Dash(
     ],
     suppress_callback_exceptions=True
 )
+
+# Expose the server for Gunicorn
+server = app.server
+
+# Load the dataset
+data = pd.read_csv('Go - Sheet1.csv')
+
+# App title
 app.title = "Electricity and CO2 Insights"
 
 # Define app layout
