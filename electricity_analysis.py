@@ -4,15 +4,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 
-<<<<<<< HEAD
 # Initialize the Dash app
-=======
-# Load the dataset
-data = pd.read_csv('Go - Sheet1.csv')
-
-
-# Initialize the Dash app with Bootstrap theme
->>>>>>> 9afb8a96d9faad74613414395d4add48eaa1bc2c
 app = dash.Dash(
     __name__,
     external_stylesheets=[
