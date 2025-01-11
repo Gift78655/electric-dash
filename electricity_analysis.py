@@ -5,7 +5,8 @@ import plotly.express as px
 import pandas as pd
 
 # Load the dataset
-data = pd.read_csv('C:\\Users\\GIFT\\Desktop\\pyth\\Go - Sheet1.csv')
+data = pd.read_csv('Go - Sheet1.csv')
+
 
 # Initialize the Dash app with Bootstrap theme
 app = dash.Dash(
