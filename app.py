@@ -25,7 +25,6 @@ app.title = "Electricity and CO2 Insights"
 
 # Define app layout
 app.layout = dbc.Container([
-    # Header with gradient background and inspirational quote
     dbc.Row(
         dbc.Col([
             html.H1("Electricity Production and CO2 Emissions Dashboard", 
@@ -37,7 +36,6 @@ app.layout = dbc.Container([
         ], style={"background": "linear-gradient(to right, #4CAF50, #2196F3)", "padding": "20px"})
     ),
 
-    # Metrics cards with tooltips and hover effects
     dbc.Row([
         dbc.Col([
             html.Div([
@@ -73,7 +71,6 @@ app.layout = dbc.Container([
         ])
     ], style={"marginBottom": "20px", "display": "flex", "justifyContent": "space-around"}),
 
-    # Filters Section
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -102,7 +99,6 @@ app.layout = dbc.Container([
         ])
     ]),
 
-    # Tabs Section
     dbc.Tabs([
         dbc.Tab(label="CO2 and Electricity Trends", children=[
             dbc.Row([
@@ -148,7 +144,6 @@ app.layout = dbc.Container([
         ])
     ], style={"marginBottom": "20px"}),
 
-    # Footer Section
     dbc.Row(
         dbc.Col([
             html.P("Data Source: Global Electricity Dataset", style={"textAlign": "center", "fontSize": "12px"}),
@@ -160,7 +155,7 @@ app.layout = dbc.Container([
     )
 ], fluid=True, style={"fontFamily": "Arial, sans-serif", "maxWidth": "1200px", "margin": "0 auto", "padding": "20px"})
 
-# Callbacks for updating the charts
+
 @app.callback(
     [
         Output("co2-trend", "figure"),
@@ -177,7 +172,6 @@ app.layout = dbc.Container([
 def update_charts(selected_country, year_range):
     filtered_data = data[(data["COUNTRY"] == selected_country) & (data["YEAR"] >= year_range[0]) & (data["YEAR"] <= year_range[1])]
 
-    # CO2 Emissions Trend
     co2_fig = px.line(
         filtered_data,
         x="YEAR",
@@ -188,7 +182,6 @@ def update_charts(selected_country, year_range):
         template="plotly_dark"
     )
 
-    # Electricity Production Trend
     electricity_fig = px.line(
         filtered_data,
         x="YEAR",
@@ -199,7 +192,6 @@ def update_charts(selected_country, year_range):
         template="plotly_dark"
     )
 
-    # Carbon Intensity
     filtered_data["Carbon Intensity"] = filtered_data["CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2"] / filtered_data["ELECTRICITY PRODUCTION TWH"]
     carbon_intensity_fig = px.line(
         filtered_data,
@@ -210,7 +202,6 @@ def update_charts(selected_country, year_range):
         color_discrete_sequence=["#4CAF50"]
     )
 
-    # Renewable vs Non-Renewable
     renewable_comparison_fig = px.bar(
         filtered_data,
         x="YEAR",
@@ -221,7 +212,6 @@ def update_charts(selected_country, year_range):
         color_discrete_sequence=["#4CAF50", "#FF9800"]
     )
 
-    # Renewables and Wind/Solar Share Pie Chart
     latest_year_data = filtered_data.iloc[-1]
     pie_fig = px.pie(
         names=["Renewables", "Wind/Solar", "Other"],
@@ -234,7 +224,6 @@ def update_charts(selected_country, year_range):
         color_discrete_sequence=["#4CAF50", "#FF9800", "#E91E63"]
     )
 
-    # Consumption vs Production
     consumption_vs_production_fig = px.line(
         filtered_data,
         x="YEAR",
@@ -245,7 +234,6 @@ def update_charts(selected_country, year_range):
         template="plotly_dark"
     )
 
-    # Regional CO2 Emissions
     regional_data = data[(data["YEAR"] == latest_year_data["YEAR"])]
     regional_co2_fig = px.bar(
         regional_data,
@@ -257,7 +245,6 @@ def update_charts(selected_country, year_range):
         color_discrete_sequence=px.colors.qualitative.Set3
     )
 
-    # Correlation Heatmap
     correlation_fig = px.imshow(
         filtered_data[[
             "CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2", 
@@ -271,20 +258,9 @@ def update_charts(selected_country, year_range):
 
     return co2_fig, electricity_fig, carbon_intensity_fig, renewable_comparison_fig, pie_fig, consumption_vs_production_fig, regional_co2_fig, correlation_fig
 
-# Run the app
-app = dash.Dash(
-    __name__,
-    external_stylesheets=[
-        dbc.themes.CERULEAN,
-        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    ],
-    suppress_callback_exceptions=True
-)
-
-server = app.server  # Required for deployment on Render
-
-# Local development entry point
+# Local server runner
 if __name__ == "__main__":
     app.run_server(debug=True, host="0.0.0.0", port=8080)
+
 
 
