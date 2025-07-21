@@ -272,5 +272,6 @@ def update_charts(selected_country, year_range):
     return co2_fig, electricity_fig, carbon_intensity_fig, renewable_comparison_fig, pie_fig, consumption_vs_production_fig, regional_co2_fig, correlation_fig
 
 # Run the app
-if __name__ == "__main__":
-    app.run_server(debug=True)
+app = dash.Dash(...)
+server = app.server
+
