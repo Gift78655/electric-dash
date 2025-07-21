@@ -1,1 +1,1 @@
-web: gunicorn electricity_analysis.py:server
+web: gunicorn app.py:server
