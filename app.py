@@ -14,7 +14,7 @@ app = dash.Dash(
     suppress_callback_exceptions=True
 )
 
-# Expose the server for Gunicorn
+# Expose the server for deployment
 server = app.server
 
 # Load the dataset
@@ -147,10 +147,7 @@ app.layout = dbc.Container([
     dbc.Row(
         dbc.Col([
             html.P("Data Source: Global Electricity Dataset", style={"textAlign": "center", "fontSize": "12px"}),
-            html.P(
-                "Developed by Rethabile Gift", 
-                style={"textAlign": "center", "fontSize": "12px", "marginBottom": "0"}
-            )
+            html.P("Developed by Rethabile Gift", style={"textAlign": "center", "fontSize": "12px", "marginBottom": "0"})
         ])
     )
 ], fluid=True, style={"fontFamily": "Arial, sans-serif", "maxWidth": "1200px", "margin": "0 auto", "padding": "20px"})
@@ -170,12 +167,12 @@ app.layout = dbc.Container([
     [Input("country-dropdown", "value"), Input("year-slider", "value")]
 )
 def update_charts(selected_country, year_range):
-    filtered_data = data[(data["COUNTRY"] == selected_country) & (data["YEAR"] >= year_range[0]) & (data["YEAR"] <= year_range[1])]
+    filtered_data = data[(data["COUNTRY"] == selected_country) & 
+                         (data["YEAR"] >= year_range[0]) & 
+                         (data["YEAR"] <= year_range[1])]
 
     co2_fig = px.line(
-        filtered_data,
-        x="YEAR",
-        y="CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2",
+        filtered_data, x="YEAR", y="CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2",
         title=f"CO2 Emissions Trend for {selected_country}",
         labels={"CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2": "CO2 Emissions (MtCO2)"},
         color_discrete_sequence=["#FF5733"],
@@ -183,9 +180,7 @@ def update_charts(selected_country, year_range):
     )
 
     electricity_fig = px.line(
-        filtered_data,
-        x="YEAR",
-        y="ELECTRICITY PRODUCTION TWH",
+        filtered_data, x="YEAR", y="ELECTRICITY PRODUCTION TWH",
         title=f"Electricity Production Trend for {selected_country}",
         labels={"ELECTRICITY PRODUCTION TWH": "Electricity Production (TWh)"},
         color_discrete_sequence=["#33C3FF"],
@@ -194,17 +189,14 @@ def update_charts(selected_country, year_range):
 
     filtered_data["Carbon Intensity"] = filtered_data["CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2"] / filtered_data["ELECTRICITY PRODUCTION TWH"]
     carbon_intensity_fig = px.line(
-        filtered_data,
-        x="YEAR",
-        y="Carbon Intensity",
+        filtered_data, x="YEAR", y="Carbon Intensity",
         title=f"Carbon Intensity for {selected_country}",
         labels={"Carbon Intensity": "kg CO2 per TWh"},
         color_discrete_sequence=["#4CAF50"]
     )
 
     renewable_comparison_fig = px.bar(
-        filtered_data,
-        x="YEAR",
+        filtered_data, x="YEAR",
         y=["SHARE OF RENEWABLES IN ELECTRICITY PRODUCTION PERC", "SHARE OF WIND AND SOLAR IN ELECTRICITY PRODUCTION  PERC"],
         title=f"Renewable vs Non-Renewable for {selected_country}",
         labels={"value": "Percentage", "variable": "Source"},
@@ -225,8 +217,7 @@ def update_charts(selected_country, year_range):
     )
 
     consumption_vs_production_fig = px.line(
-        filtered_data,
-        x="YEAR",
+        filtered_data, x="YEAR",
         y=["ELECTRICITY PRODUCTION TWH", "ELECTRICITY DOMESTIC CONSUMPTION TWH"],
         title=f"Electricity Consumption vs Production for {selected_country}",
         labels={"value": "Electricity (TWh)", "variable": "Metric"},
@@ -234,11 +225,9 @@ def update_charts(selected_country, year_range):
         template="plotly_dark"
     )
 
-    regional_data = data[(data["YEAR"] == latest_year_data["YEAR"])]
+    regional_data = data[data["YEAR"] == latest_year_data["YEAR"]]
     regional_co2_fig = px.bar(
-        regional_data,
-        x="COUNTRY",
-        y="CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2",
+        regional_data, x="COUNTRY", y="CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2",
         color="REGION",
         title=f"CO2 Emissions by Region ({int(latest_year_data['YEAR'])})",
         labels={"CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2": "CO2 Emissions (MtCO2)"},
@@ -247,8 +236,8 @@ def update_charts(selected_country, year_range):
 
     correlation_fig = px.imshow(
         filtered_data[[
-            "CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2", 
-            "ELECTRICITY PRODUCTION TWH", 
+            "CO2 EMISSIONS FROM FUEL COMBUSTION MTCO2",
+            "ELECTRICITY PRODUCTION TWH",
             "ELECTRICITY DOMESTIC CONSUMPTION TWH"
         ]].corr(),
         title="Correlation Analysis",
@@ -256,11 +245,10 @@ def update_charts(selected_country, year_range):
         color_continuous_scale=px.colors.sequential.Viridis
     )
 
-    return co2_fig, electricity_fig, carbon_intensity_fig, renewable_comparison_fig, pie_fig, consumption_vs_production_fig, regional_co2_fig, correlation_fig
+    return (co2_fig, electricity_fig, carbon_intensity_fig,
+            renewable_comparison_fig, pie_fig, consumption_vs_production_fig,
+            regional_co2_fig, correlation_fig)
 
-# Local server runner
+# Run locally
 if __name__ == "__main__":
     app.run_server(debug=True, host="0.0.0.0", port=8080)
-
-
-
