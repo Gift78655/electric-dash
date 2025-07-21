@@ -272,6 +272,19 @@ def update_charts(selected_country, year_range):
     return co2_fig, electricity_fig, carbon_intensity_fig, renewable_comparison_fig, pie_fig, consumption_vs_production_fig, regional_co2_fig, correlation_fig
 
 # Run the app
-app = dash.Dash(...)
-server = app.server
+app = dash.Dash(
+    __name__,
+    external_stylesheets=[
+        dbc.themes.CERULEAN,
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    ],
+    suppress_callback_exceptions=True
+)
+
+server = app.server  # Required for deployment on Render
+
+# Local development entry point
+if __name__ == "__main__":
+    app.run_server(debug=True, host="0.0.0.0", port=8080)
+
 
